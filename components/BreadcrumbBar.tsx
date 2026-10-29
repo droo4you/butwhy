@@ -1,7 +1,8 @@
 "use client";
 
-import { CardData } from "@/types";
+import { useEffect, useRef } from "react";
 import { T } from "@/lib/tokens";
+import type { CardData } from "@/types";
 
 interface BreadcrumbBarProps {
   chain: CardData[];
@@ -9,69 +10,80 @@ interface BreadcrumbBarProps {
 }
 
 export default function BreadcrumbBar({ chain, onJumpTo }: BreadcrumbBarProps) {
+  const barRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    bar.scrollTo({ left: bar.scrollWidth, behavior: reduce ? "auto" : "smooth" });
+  }, [chain.length]);
+
   return (
-    <div
+    <nav
+      ref={barRef}
+      aria-label="Questions in this trail"
+      className="crumb-bar"
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
         background: T.ink,
-        height: "38px",
+        minHeight: 48,
         display: "flex",
         alignItems: "center",
-        padding: "0 16px",
-        gap: "0",
+        padding: "0 12px",
         overflowX: "auto",
-        scrollbarWidth: "none",
+        gap: 0,
       }}
     >
-      <style>{`.bc::-webkit-scrollbar{display:none}`}</style>
-      {chain.map((card, i) => (
-        <button
-          key={card.id}
-          onClick={() => onJumpTo(i)}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "0",
-            padding: "0",
-            flexShrink: 0,
-          }}
-        >
+      {chain.map((card, index) => {
+        const current = index === chain.length - 1;
+        return (
           <span
-            style={{
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: "11px",
-              color: i === chain.length - 1 ? T.paper : T.inkMuted,
-              fontWeight: i === chain.length - 1 ? 600 : 400,
-              maxWidth: "120px",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              padding: "0 4px",
-            }}
+            key={card.id}
+            style={{ display: "inline-flex", alignItems: "center", flexShrink: 0 }}
           >
-            {card.emoji} {card.topic.replace(/^Why /i, "").slice(0, 28)}…
-          </span>
-          {i < chain.length - 1 && (
-            <span
+            {index > 0 && (
+              <span
+                aria-hidden="true"
+                style={{
+                  fontFamily: "var(--font-dm-sans), sans-serif",
+                  fontSize: 13,
+                  color: "#B7AB96",
+                  padding: "0 4px",
+                }}
+              >
+                →
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => onJumpTo(index)}
+              aria-current={current ? "location" : undefined}
+              title={card.topic}
               style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                minHeight: 48,
+                padding: "0 4px",
+                color: current ? T.paper : "#E7E0D2",
                 fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: "11px",
-                color: T.inkFaint,
-                padding: "0 2px",
+                fontSize: 13,
+                fontWeight: current ? 600 : 500,
               }}
             >
-              /
-            </span>
-          )}
-        </button>
-      ))}
-    </div>
+              <span style={{ fontSize: 11, letterSpacing: "0.06em", opacity: 0.75 }}>
+                {index + 1}
+              </span>
+              <span className={current ? "crumb-label crumb-label-current" : "crumb-label"}>
+                {card.topic}
+              </span>
+            </button>
+          </span>
+        );
+      })}
+    </nav>
   );
 }

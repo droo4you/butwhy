@@ -1,7 +1,9 @@
 "use client";
 
-import { CardData } from "@/types";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { T, CAT_COLORS } from "@/lib/tokens";
+import type { CardData } from "@/types";
 
 interface MapOverlayProps {
   chain: CardData[];
@@ -9,67 +11,117 @@ interface MapOverlayProps {
   onJumpTo: (index: number) => void;
 }
 
-export default function MapOverlay({
-  chain,
-  onClose,
-  onJumpTo,
-}: MapOverlayProps) {
-  return (
+export default function MapOverlay({ chain, onClose, onJumpTo }: MapOverlayProps) {
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const previously = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const root = dialogRef.current;
+      if (!root) return;
+      const items = Array.from(
+        root.querySelectorAll<HTMLElement>("button, [href], [tabindex]:not([tabindex='-1'])")
+      ).filter((item) => !item.hasAttribute("disabled"));
+      if (items.length === 0) return;
+      const first = items[0]!;
+      const last = items[items.length - 1]!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+      previously?.focus?.();
+    };
+  }, [mounted, onClose]);
+
+  const dialog = (
     <div
+      ref={dialogRef}
+      id="rabbit-map"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="map-title"
       style={{
         position: "fixed",
         inset: 0,
         zIndex: 200,
-        background: "rgba(28,24,18,0.96)",
+        background: T.ink,
         display: "flex",
         flexDirection: "column",
       }}
-      onClick={onClose}
     >
-      {/* Header */}
       <div
         style={{
-          padding: "20px 24px 16px",
-          borderBottom: "1px solid rgba(200,191,168,0.2)",
+          padding: "18px 20px 14px",
+          borderBottom: "1px solid rgba(200,191,168,0.22)",
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "space-between",
-          flexShrink: 0,
+          gap: 16,
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         <div>
-          <span
+          <h2
+            id="map-title"
             style={{
               fontFamily: "var(--font-baskerville), Georgia, serif",
-              fontSize: "18px",
+              fontSize: "clamp(20px, 4vw, 26px)",
               fontWeight: 700,
               color: T.paper,
+              margin: 0,
+              letterSpacing: "-0.02em",
             }}
           >
-            Your rabbit hole
-          </span>
-          <span
+            The rabbit hole
+          </h2>
+          <p
             style={{
               fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: "12px",
-              color: T.inkMuted,
-              marginLeft: "12px",
+              fontSize: 13,
+              color: "#D9D0C1",
+              margin: "6px 0 0",
             }}
           >
-            {chain.length} {chain.length === 1 ? "level" : "levels"} deep
-          </span>
+            {chain.length} {chain.length === 1 ? "level" : "levels"} on one thread
+          </p>
         </div>
         <button
+          ref={closeRef}
+          type="button"
           onClick={onClose}
           style={{
-            background: "none",
-            border: "1px solid rgba(200,191,168,0.3)",
-            color: T.inkMuted,
+            background: "transparent",
+            border: "1px solid rgba(232,220,200,0.4)",
+            color: T.paper,
             fontFamily: "var(--font-dm-sans), sans-serif",
-            fontSize: "12px",
-            padding: "6px 14px",
-            borderRadius: "2px",
+            fontSize: 13,
+            minHeight: 44,
+            padding: "8px 14px",
+            borderRadius: 2,
             cursor: "pointer",
           }}
         >
@@ -77,113 +129,121 @@ export default function MapOverlay({
         </button>
       </div>
 
-      {/* Chain list */}
-      <div
-        style={{ overflowY: "auto", padding: "20px 24px" }}
-        onClick={(e) => e.stopPropagation()}
+      <ol
+        style={{
+          listStyle: "none",
+          margin: 0,
+          padding: "22px 20px 48px",
+          overflowY: "auto",
+          maxWidth: 680,
+          width: "100%",
+          alignSelf: "center",
+        }}
       >
-        {chain.map((card, i) => {
-          const catColor = CAT_COLORS[card.cat] || T.inkFaint;
+        {chain.map((card, index) => {
+          const catColor = CAT_COLORS[card.cat] || "#D9D0C1";
+          const here = index === chain.length - 1;
           return (
-            <button
-              key={card.id}
-              onClick={() => {
-                onJumpTo(i);
-                onClose();
-              }}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "16px",
-                width: "100%",
-                textAlign: "left",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: "14px 0",
-                borderBottom: "1px solid rgba(200,191,168,0.12)",
-              }}
-            >
-              {/* Depth indicator */}
-              <div
+            <li key={card.id}>
+              <button
+                type="button"
+                onClick={() => {
+                  onJumpTo(index);
+                  onClose();
+                }}
                 style={{
-                  flexShrink: 0,
-                  marginTop: "3px",
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "4px",
+                  alignItems: "flex-start",
+                  gap: 14,
+                  width: "100%",
+                  textAlign: "left",
+                  background: here ? "rgba(245,240,232,0.06)" : "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "8px 8px 8px 0",
+                  borderRadius: 2,
                 }}
               >
-                <div
+                <span
+                  aria-hidden="true"
                   style={{
-                    width: "28px",
-                    height: "28px",
+                    flexShrink: 0,
+                    width: 32,
+                    height: 32,
                     borderRadius: "50%",
-                    background: i === 0 ? catColor : "rgba(200,191,168,0.15)",
-                    border: `1px solid ${i === 0 ? catColor : "rgba(200,191,168,0.3)"}`,
-                    display: "flex",
+                    border: `2px solid ${here ? T.accentSoft : "rgba(232,220,200,0.55)"}`,
+                    background: index === 0 ? catColor : "transparent",
+                    color: T.paper,
+                    display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "13px",
-                  }}
-                >
-                  {card.emoji}
-                </div>
-                {i < chain.length - 1 && (
-                  <div
-                    style={{
-                      width: "1px",
-                      height: "100%",
-                      minHeight: "16px",
-                      background: "rgba(200,191,168,0.2)",
-                    }}
-                  />
-                )}
-              </div>
-
-              {/* Content */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
                     fontFamily: "var(--font-dm-sans), sans-serif",
-                    fontSize: "10px",
-                    color: catColor,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    marginBottom: "4px",
+                    fontSize: 12,
+                    fontWeight: 600,
                   }}
                 >
-                  {i === 0 ? "Start" : `Level ${i}`}
-                </div>
-                <div
+                  {index + 1}
+                </span>
+                <span style={{ minWidth: 0 }}>
+                  <span
+                    style={{
+                      display: "block",
+                      fontFamily: "var(--font-dm-sans), sans-serif",
+                      fontSize: 11,
+                      letterSpacing: "0.12em",
+                      textTransform: "uppercase",
+                      color: here ? T.accentSoft : "#D9D0C1",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {here ? "You are here" : index === 0 ? "The question" : `Level ${index}`}
+                  </span>
+                  <span
+                    style={{
+                      display: "block",
+                      fontFamily: "var(--font-baskerville), Georgia, serif",
+                      fontSize: "clamp(16px, 3vw, 20px)",
+                      color: T.paper,
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    {card.topic}
+                  </span>
+                </span>
+              </button>
+              <p className="map-thread" style={{ marginTop: 4 }}>
+                <span
+                  style={{
+                    display: "block",
+                    fontFamily: "var(--font-dm-sans), sans-serif",
+                    fontSize: 10,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "#B7AB96",
+                    marginBottom: 4,
+                  }}
+                >
+                  {here ? "The next but" : "The but that led on"}
+                </span>
+                <span
                   style={{
                     fontFamily: "var(--font-baskerville), Georgia, serif",
-                    fontSize: "15px",
-                    color: T.paper,
-                    lineHeight: 1.4,
-                    marginBottom: "4px",
-                  }}
-                >
-                  {card.topic}
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-dm-sans), sans-serif",
-                    fontSize: "11px",
-                    color: T.inkFaint,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                    fontStyle: "italic",
+                    fontSize: 15,
+                    lineHeight: 1.55,
+                    color: "#E7D3C4",
                   }}
                 >
                   {card.hook}
-                </div>
-              </div>
-            </button>
+                </span>
+              </p>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </div>
   );
+
+  if (!mounted) return null;
+  return createPortal(dialog, document.body);
 }

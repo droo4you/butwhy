@@ -1,25 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
-import { fetchDeepDive } from "@/lib/llm";
+import { NextRequest } from "next/server";
+import { DiveError, COPY } from "@/lib/errors";
+import { nextCard, parseDiveBody } from "@/lib/dive";
+import { clientIp } from "@/lib/rate-limit";
+import { respond, respondError } from "@/lib/respond";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { hook, depth } = body as { hook: string; depth: number };
-
-    if (!hook || depth === undefined) {
-      return NextResponse.json(
-        { error: "Missing required fields: hook, depth" },
-        { status: 400 }
-      );
+    const length = Number(req.headers.get("content-length") || "0");
+    if (Number.isFinite(length) && length > 20_000) {
+      throw new DiveError("invalid", COPY.invalid);
     }
-
-    const result = await fetchDeepDive(hook, depth);
-    return NextResponse.json(result);
+    const body = await req.json().catch(() => {
+      throw new DiveError("invalid", COPY.invalid);
+    });
+    const parsed = parseDiveBody(body);
+    const card = await nextCard({
+      ...parsed,
+      ip: clientIp(req.headers.get("x-forwarded-for"), req.headers.get("x-real-ip")),
+    });
+    return respond(card);
   } catch (error) {
-    console.error("[/api/dive]", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return respondError(error, "[/api/dive]");
   }
 }

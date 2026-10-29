@@ -4,12 +4,21 @@ export type Category =
   | "nature"
   | "philosophy"
   | "food"
-  | "everyday";
+  | "everyday"
+  | "question";
 
 export interface SeedTopic {
   id: string;
   cat: Category;
   emoji: string;
+  topic: string;
+  answer: string;
+  hook: string;
+  /** Hidden from the home grid. Still has a page and a written trail. */
+  listed?: boolean;
+}
+
+export interface PresetCard {
   topic: string;
   answer: string;
   hook: string;
@@ -21,14 +30,31 @@ export interface CardData extends SeedTopic {
   _provider?: string;
 }
 
-export interface DiveResponse {
+export interface HistoryItem {
   topic: string;
-  answer: string;
   hook: string;
+}
+
+export interface DiveResponse extends PresetCard {
   _provider: string;
 }
 
-// Supabase DB shapes (used in Session 3)
+export type DiveErrorCode =
+  | "no_provider"
+  | "model_error"
+  | "unsafe"
+  | "invalid"
+  | "too_deep"
+  | "rate_limited"
+  | "budget"
+  | "repeat";
+
+export interface DiveErrorBody {
+  error: string;
+  code: DiveErrorCode;
+}
+
+// Supabase shapes kept for a future shareable-chain pass. Nothing writes them yet.
 export interface ChainRecord {
   id: string;
   slug: string;

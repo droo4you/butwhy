@@ -204,4 +204,44 @@ export const SEEDS: SeedTopic[] = [
     answer: "Social feeds use variable reward schedules — the same psychological mechanism as slot machines. You never know if the next post will be amazing or boring, and that unpredictability is far more addictive than guaranteed rewards.",
     hook: "But the engineers who built these systems largely won't let their own children use them — the designers of the machine know exactly what it does.",
   },
+
+  // Unlisted trails reached by typing the question. Same written depth, not on the grid.
+  {
+    id: "b1", cat: "science", emoji: "🌤️", listed: false,
+    topic: "Why is the sky blue?",
+    answer: "Sunlight looks white, but it is a mix of colors. Air molecules scatter the blue part in every direction, so whichever way you look, some blue reaches your eye.",
+    hook: "But the sky is not always blue — at sunset it turns red and orange.",
+  },
+  {
+    id: "b2", cat: "science", emoji: "🧊", listed: false,
+    topic: "Why is ice slippery?",
+    answer: "A thin, water-like film sits on ice when you step on it. Your shoe slides on that film instead of gripping solid crystal.",
+    hook: "But ice stays slippery far below freezing, when a simple melt layer should not exist.",
+  },
+  {
+    id: "b3", cat: "everyday", emoji: "😮", listed: false,
+    topic: "Why do we hiccup?",
+    answer: "A hiccup is a sudden jerk of the diaphragm, the muscle under your lungs, followed by a snap of the vocal cords. That snap is the hic you hear.",
+    hook: "But nobody is sure what hiccups are for — they may be a leftover from our fish ancestors.",
+  },
+  {
+    id: "b4", cat: "science", emoji: "✨", listed: false,
+    topic: "Why do stars twinkle?",
+    answer: "Stars are so far away they act like pinpoints. Their light wobbles as it passes through moving pockets of warm and cool air, so the brightness shimmers.",
+    hook: "But planets usually do not twinkle — they shine steadier than stars.",
+  },
+  {
+    id: "b5", cat: "everyday", emoji: "🥶", listed: false,
+    topic: "Why do we get goosebumps?",
+    answer: "Tiny muscles at the root of each hair pull tight when you are cold or startled. The hair stands up, and the skin around it bunches into a bump.",
+    hook: "But human hair is too sparse for goosebumps to keep us warm.",
+  },
+  {
+    id: "b6", cat: "science", emoji: "🧭", listed: false,
+    topic: "Why do compasses point north?",
+    answer: "A compass needle is a tiny magnet. It lines up with Earth's magnetic field, so the marked end swings toward magnetic north.",
+    hook: "But magnetic north is not the same spot as the North Pole, and it moves.",
+  },
 ];
+
+export const LISTED_SEEDS = SEEDS.filter((seed) => seed.listed !== false);

@@ -22,12 +22,24 @@ export const CAT_COLORS: Record<string, string> = {
   philosophy: "#3D3A6B",
   food:       "#7A3B1E",
   everyday:   "#5C4A2A",
+  question:   "#6B3A1F",
+};
+
+export const CAT_LABELS: Record<string, string> = {
+  science: "Science",
+  history: "History",
+  nature: "Nature",
+  philosophy: "Philosophy",
+  food: "Food",
+  everyday: "Everyday",
+  question: "Your question",
 };
 
 export const PROVIDER_LABELS: Record<string, string> = {
-  groq:     "Groq",
-  gemini:   "Gemini",
-  claude:   "Claude Haiku",
-  openai:   "GPT-4o mini",
-  fallback: "Built-in",
+  groq: "Groq",
+  gemini: "Gemini",
+  claude: "Claude",
+  openai: "OpenAI",
+  preset: "Written trail",
+  mock: "Practice mode",
 };
