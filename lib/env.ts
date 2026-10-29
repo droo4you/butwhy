@@ -59,17 +59,23 @@ export function providerModel(provider: ProviderName, useGlobalOverride: boolean
 }
 
 /**
+ * off (the default): written trails only. No model call, even if a key is present.
  * auto: cheapest configured provider first (Groq 8B, then Gemini Flash-Lite).
  * A named provider is used alone, so cost stays predictable.
  * mock is local only. Vercel production never serves practice cards.
  */
 export function resolveProvider(): ResolvedProvider {
-  let choice = (env("LLM_PROVIDER") || "auto").toLowerCase();
-  if (choice === "mock" && env("VERCEL_ENV") === "production") {
-    console.warn("[llm] LLM_PROVIDER=mock is ignored in production");
-    choice = "auto";
+  const choice = (env("LLM_PROVIDER") || "off").toLowerCase();
+  if (choice === "off" || choice === "none" || choice === "preset" || choice === "") {
+    return { kind: "none" };
   }
-  if (choice === "mock") return { kind: "mock" };
+  if (choice === "mock") {
+    if (env("VERCEL_ENV") === "production") {
+      console.warn("[llm] LLM_PROVIDER=mock is ignored in production");
+      return { kind: "none" };
+    }
+    return { kind: "mock" };
+  }
 
   const named = PROVIDER_ORDER.find((provider) => provider === choice);
   if (named) {

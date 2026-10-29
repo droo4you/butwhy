@@ -15,6 +15,10 @@ const CATS: { id: Category | "all"; label: string }[] = [
   { id: "philosophy", label: "Philosophy" },
   { id: "food", label: "Food" },
   { id: "everyday", label: "Everyday" },
+  { id: "gamedev", label: "Game Dev" },
+  { id: "web", label: "Web" },
+  { id: "music", label: "Music" },
+  { id: "body", label: "Bodies" },
 ];
 
 export default function FeedScreen() {
@@ -100,7 +104,7 @@ export default function FeedScreen() {
               margin: "0 0 16px",
             }}
           >
-            A few already have a written trail. Anything else waits for a live model.
+            A close question opens a written trail. If nothing matches, the shelf suggests one.
           </p>
           <AskForm />
         </div>
@@ -240,7 +244,7 @@ export default function FeedScreen() {
             margin: "0 0 8px",
           }}
         >
-          {LISTED_SEEDS.length} rabbit holes. Each opening answer has four more whys already written.
+          {LISTED_SEEDS.length} rabbit holes. Each one is written about eight whys down, to bedrock. No key required.
         </p>
         <p
           style={{

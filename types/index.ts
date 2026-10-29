@@ -5,7 +5,19 @@ export type Category =
   | "philosophy"
   | "food"
   | "everyday"
+  | "gamedev"
+  | "web"
+  | "music"
+  | "body"
   | "question";
+
+export interface TrailSuggestion {
+  id: string;
+  topic: string;
+  hook: string;
+  emoji: string;
+  cat: Category;
+}
 
 export interface SeedTopic {
   id: string;

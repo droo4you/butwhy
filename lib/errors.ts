@@ -2,9 +2,9 @@ import type { DiveErrorCode } from "@/types";
 
 export const COPY = {
   no_provider:
-    "The written trail ends here. A live storyteller can follow that last But once one is connected. Nothing was invented to fill this gap.",
+    "You hit bedrock. This trail was written all the way down, and that last card is the bottom.",
   no_provider_ask:
-    "That question is not on the written shelf yet. A live storyteller can take it once one is connected. The starter trails still go several whys deep on their own.",
+    "Nothing on the shelf is that exact question. The closest written trails are below, and they already go to bedrock.",
   model_error:
     "The next answer did not come back. Nothing was invented to fill the gap.",
   unsafe:

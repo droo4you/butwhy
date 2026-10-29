@@ -22,6 +22,10 @@ export const CAT_COLORS: Record<string, string> = {
   philosophy: "#3D3A6B",
   food:       "#7A3B1E",
   everyday:   "#5C4A2A",
+  gamedev:    "#2A3F78",
+  web:        "#1E4D4A",
+  music:      "#7A3B4E",
+  body:       "#7A4E3A",
   question:   "#6B3A1F",
 };
 
@@ -32,6 +36,10 @@ export const CAT_LABELS: Record<string, string> = {
   philosophy: "Philosophy",
   food: "Food",
   everyday: "Everyday",
+  gamedev: "Game Dev",
+  web: "Web",
+  music: "Music",
+  body: "Bodies",
   question: "Your question",
 };
 

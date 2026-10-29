@@ -1,11 +1,21 @@
+import { DEEPER } from "@/data/deeper";
+import { NEW_TRAILS } from "@/data/new-trails";
 import type { PresetCard } from "@/types";
 
 /**
- * Hand-written follow-ups so every starter question goes four whys deep
+ * Hand-written follow-ups. Levels 5–8 live in data/deeper.ts.
+ * Level n asks why the previous card's But-sentence is true.
  * with no model key and no invented "fallback" card.
  * Level n asks why the previous card's But-sentence is true.
  */
-export const PRESET_DEPTH = 4;
+export const PRESET_DEPTH = 8;
+
+export function chainFor(seedId: string): readonly PresetCard[] | undefined {
+  const base = PRESETS[seedId] ?? NEW_TRAILS[seedId];
+  if (!base) return undefined;
+  const extra = DEEPER[seedId] ?? [];
+  return extra.length > 0 ? [...base, ...extra] : base;
+}
 
 export const PRESETS: Record<string, readonly PresetCard[]> = {
   s1: [
@@ -848,7 +858,7 @@ export const PRESETS: Record<string, readonly PresetCard[]> = {
 
 export function presetAt(seedId: string, depth: number): PresetCard | null {
   if (!Number.isInteger(depth) || depth < 1) return null;
-  const chain = PRESETS[seedId];
+  const chain = chainFor(seedId);
   if (!chain) return null;
   return chain[depth - 1] ?? null;
 }

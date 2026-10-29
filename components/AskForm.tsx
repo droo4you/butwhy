@@ -2,12 +2,18 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SEEDS } from "@/data/seeds";
 import { matchSeed } from "@/lib/match";
 import { assessQuestion, cleanQuestion } from "@/lib/safety";
 import { T } from "@/lib/tokens";
 
-const SUGGESTIONS = SEEDS.filter((seed) => seed.listed === false).map((seed) => seed.topic);
+const SUGGESTIONS = [
+  "Why is the sky blue?",
+  "Why do games run at 60 frames a second?",
+  "Why does typing an address open a page?",
+  "Why does jumping in a game feel good?",
+  "Why do songs get stuck in your head?",
+  "Why do we blink?",
+];
 
 export default function AskForm({ autoFocus = false }: { autoFocus?: boolean }) {
   const router = useRouter();

@@ -5,11 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { matchSeed } from "@/lib/match";
 import { assessQuestion, cleanQuestion } from "@/lib/safety";
 import { T } from "@/lib/tokens";
-import type { CardData, DiveResponse } from "@/types";
+import type { CardData, DiveResponse, TrailSuggestion } from "@/types";
 import AskForm from "./AskForm";
 import DiveScreen from "./DiveScreen";
 
-type Phase = "form" | "loading" | "ready" | "error";
+type Phase = "form" | "loading" | "ready" | "error" | "suggest";
 
 export default function AskExperience() {
   const params = useSearchParams();
@@ -18,12 +18,14 @@ export default function AskExperience() {
   const [phase, setPhase] = useState<Phase>(raw ? "loading" : "form");
   const [root, setRoot] = useState<CardData | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [suggestions, setSuggestions] = useState<TrailSuggestion[]>([]);
 
   useEffect(() => {
     if (!raw) {
       setPhase("form");
       setRoot(null);
       setMessage(null);
+      setSuggestions([]);
       return;
     }
 
@@ -55,10 +57,18 @@ export default function AskExperience() {
           redirect?: string;
           card?: DiveResponse;
           error?: string;
+          message?: string;
+          suggestions?: TrailSuggestion[];
         };
         if (cancel) return;
         if (data.redirect) {
           router.replace(data.redirect);
+          return;
+        }
+        if (response.ok && data.suggestions) {
+          setSuggestions(data.suggestions);
+          setMessage(data.message || "These written trails are close.");
+          setPhase("suggest");
           return;
         }
         if (!response.ok || !data.card) {
@@ -165,6 +175,71 @@ export default function AskExperience() {
           >
             Following “{raw}”…
           </p>
+        )}
+
+        {phase === "suggest" && (
+          <div role="status" style={{ marginBottom: 28 }}>
+            <p
+              style={{
+                fontFamily: "var(--font-baskerville), Georgia, serif",
+                fontSize: 22,
+                margin: "0 0 8px",
+              }}
+            >
+              Try a trail that is already written
+            </p>
+            <p
+              style={{
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                fontSize: 15,
+                lineHeight: 1.6,
+                color: T.inkFaint,
+                margin: "0 0 16px",
+              }}
+            >
+              {message}
+            </p>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 10 }}>
+              {suggestions.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`/topic/${item.id}`}
+                    style={{
+                      display: "block",
+                      textDecoration: "none",
+                      background: T.cream,
+                      borderLeft: `3px solid ${T.accent}`,
+                      padding: "12px 14px",
+                      color: T.ink,
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "var(--font-baskerville), Georgia, serif",
+                        fontSize: 18,
+                        fontWeight: 700,
+                      }}
+                    >
+                      <span aria-hidden="true">{item.emoji} </span>
+                      {item.topic}
+                    </span>
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: 4,
+                        fontFamily: "var(--font-dm-sans), sans-serif",
+                        fontSize: 13,
+                        color: T.inkFaint,
+                        lineHeight: 1.45,
+                      }}
+                    >
+                      {item.hook}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {phase === "error" && message && (

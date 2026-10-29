@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       clientIp(req.headers.get("x-forwarded-for"), req.headers.get("x-real-ip"))
     );
     if ("redirect" in result) return respond({ redirect: result.redirect });
+    if ("suggestions" in result) return respond(result);
     return respond({ card: result });
   } catch (error) {
     return respondError(error, "[/api/ask]");

@@ -103,6 +103,8 @@ The pieces are small and the types are honest about the card shape. The problems
 
 ## What this revamp changes
 
+The follow-up section below is the current product: eight written levels and no model unless someone opts in. The bullets here describe the first repair.
+
 - Written trails: four follow-ups for each of the 32 shelf questions, plus six questions reachable by typing them (`Why is the sky blue?`, ice, hiccups, stars, goosebumps, compasses). Each level is the why raised by the previous But. `npm run verify` checks the link, the Why/But shape, and that topics do not repeat.
 - The generator sends the questions already asked, rejects a repeat, and will not substitute a fake card. No key, or a dead key, ends in a pause that says nothing was invented.
 - `LLM_PROVIDER` selects `auto` or one provider. Models are env overrides. Results are cached in memory and, for live calls, in the Next.js data cache for 30 days. Gemini is called with `x-goog-api-key` and thinking disabled when the API allows it. A per-instance call budget and a per-IP rate limit sit in front of live calls only.
@@ -110,6 +112,14 @@ The pieces are small and the types are honest about the card shape. The problems
 - Ask box on the home page, with length checks, a kid-scale refusal list, and a block on child-sexual combinations. A typed question that matches a written trail opens that trail instead of spending a model call.
 - Breadcrumb uses real CSS ellipsis, a 48px tap height, and light type on the dark bar. The map is a dialog (Escape, focus trap, the But between levels). Hook text uses the darker accent. Loading and the pause are on the page and in an `aria-live` region. Reduced motion is respected.
 - Shareable `/chain/[slug]` now says trails are not saved, instead of promising Session 3.
+
+## Follow-up: the shelf is the product
+
+The owner cannot spend money per tap, so the default is now `LLM_PROVIDER=off`. A key in the environment does not turn the model on. Written trails run about eight levels, ending on a bedrock card, and one more tap says you hit bedrock instead of offering a paid continuation.
+
+New shelves sit beside the original six: Game Dev (frame rate, coyote time, polygons, save files, loading screens), Web (typing an address, slow pages, servers, packet addresses, the padlock), Music (earworms, timbre, dancing, minor chords), and Bodies (blinking, bruises, fingerprints, healing bone). Typed questions use token overlap plus aliases, so "60 fps" and "what happens when you type a url" open a trail. A near miss returns suggestions. A total miss still offers a few shelves. None of that calls a model.
+
+`npm run verify` checks every link, forbids repeated questions, and requires the last answer of each trail to name bedrock.
 
 ## Residual risks
 

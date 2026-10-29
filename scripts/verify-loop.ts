@@ -1,7 +1,7 @@
 import { LISTED_SEEDS, SEEDS } from "../data/seeds";
-import { PRESET_DEPTH, PRESETS, presetAt } from "../data/presets";
+import { PRESET_DEPTH, chainFor, presetAt } from "../data/presets";
 import { assessQuestion, isUnsafe } from "../lib/safety";
-import { matchSeed } from "../lib/match";
+import { matchSeed, suggestSeeds } from "../lib/match";
 import { mockDive } from "../lib/mock";
 import { sharesContentWord, tooSimilar } from "../lib/text";
 import type { PresetCard, SeedTopic } from "../types";
@@ -36,27 +36,36 @@ function walk(seed: SeedTopic, chain: readonly PresetCard[]): void {
     check(`${label} not fallback`, card.topic !== FALLBACK_TOPIC && !card.hook.includes("math isn't discovered"));
     check(`${label} safe`, !isUnsafe(`${card.topic} ${card.answer} ${card.hook}`));
     const earlier = topics.slice(0, index + 1);
-    check(
-      `${label} not a repeat`,
-      earlier.every((topic) => !tooSimilar(topic, card.topic)),
-      card.topic
-    );
+    const clash = earlier.find((topic) => tooSimilar(topic, card.topic));
+    check(`${label} not a repeat`, !clash, clash ? `${card.topic} ~ ${clash}` : card.topic);
     previousHook = card.hook;
   });
 }
 
 for (const seed of SEEDS) {
-  const chain = PRESETS[seed.id];
+  const chain = chainFor(seed.id);
   check(`${seed.id} has a trail`, !!chain);
   if (!chain) continue;
-  check(`${seed.id} depth`, chain.length === PRESET_DEPTH, String(chain.length));
+  check(
+    `${seed.id} depth`,
+    chain.length >= PRESET_DEPTH && chain.length <= PRESET_DEPTH + 2,
+    String(chain.length)
+  );
   check(`${seed.id} lookup`, presetAt(seed.id, 1)?.topic === chain[0]?.topic);
-  check(`${seed.id} no fifth preset`, presetAt(seed.id, 5) === null);
+  check(`${seed.id} past the end`, presetAt(seed.id, chain.length + 1) === null);
+  check(`${seed.id} bedrock`, /bedrock/i.test(chain[chain.length - 1]?.answer ?? ""));
   walk(seed, chain);
 }
 
-check("listed count", LISTED_SEEDS.length === 32, String(LISTED_SEEDS.length));
-check("total trails", SEEDS.length === Object.keys(PRESETS).length);
+check("listed count", LISTED_SEEDS.length === 50, String(LISTED_SEEDS.length));
+check("has gamedev", LISTED_SEEDS.some((seed) => seed.cat === "gamedev"));
+check("has web", LISTED_SEEDS.some((seed) => seed.cat === "web"));
+check("has music", LISTED_SEEDS.some((seed) => seed.cat === "music"));
+check("has bodies", LISTED_SEEDS.some((seed) => seed.cat === "body"));
+check(
+  "total trails",
+  SEEDS.every((seed) => (chainFor(seed.id)?.length ?? 0) >= PRESET_DEPTH)
+);
 
 const keys = new Map<string, string>();
 for (const seed of SEEDS) {
@@ -71,6 +80,19 @@ check("match sky", matchSeed("Why is the sky blue?")?.id === "b1");
 check("match sky filler", matchSeed("why is the sky so blue")?.id === "b1");
 check("match hiccup", matchSeed("why do we hiccup")?.id === "b3");
 check("no wild match", matchSeed("why do cats and dogs dream about dinosaurs") === null);
+check("match fps", matchSeed("why do games run at 60 fps")?.id === "g1");
+check("match frames", matchSeed("why do games run at 60 frames a second")?.id === "g1");
+check("match url", matchSeed("what happens when you type a url")?.id === "w1");
+check("match coyote", matchSeed("why does coyote time make jumping feel good")?.id === "g2");
+check("match polygons", matchSeed("why do games use polygons")?.id === "g3");
+check("match save", matchSeed("why do save files exist")?.id === "g4");
+check("match server", matchSeed("what is a server")?.id === "w3");
+check("match earworm", matchSeed("why is this song stuck in my head")?.id === "m1");
+check("cats dream is not a hard match", matchSeed("why do cats dream") === null);
+const catDream = suggestSeeds("why do cats dream");
+check("cats dream suggests", catDream.close && catDream.seeds.length > 0);
+const nonsense = suggestSeeds("why do purple calendars whistle");
+check("nonsense still offers a shelf", nonsense.seeds.length > 0);
 
 const allowed = assessQuestion("Why is the ocean salty?");
 check("allow ocean", allowed.ok);

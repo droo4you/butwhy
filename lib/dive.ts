@@ -3,13 +3,13 @@ import { presetAt } from "@/data/presets";
 import { COPY, DiveError } from "@/lib/errors";
 import { resolveProvider } from "@/lib/env";
 import { generateLive } from "@/lib/llm";
-import { matchSeed } from "@/lib/match";
+import { matchSeed, suggestSeeds } from "@/lib/match";
 import { memoryGet, memorySet } from "@/lib/memory-cache";
 import { mockAsk, mockDive } from "@/lib/mock";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { assessQuestion, assertSafeText, cleanQuestion } from "@/lib/safety";
 import { tooSimilar } from "@/lib/text";
-import type { DiveResponse, HistoryItem } from "@/types";
+import type { DiveResponse, HistoryItem, TrailSuggestion } from "@/types";
 
 export const MAX_DEPTH = 12;
 
@@ -147,10 +147,15 @@ export async function nextCard(input: {
   return result;
 }
 
+export interface ShelfSuggestions {
+  message: string;
+  suggestions: TrailSuggestion[];
+}
+
 export async function answerQuestion(
   question: unknown,
   ip: string
-): Promise<{ redirect: string } | DiveResponse> {
+): Promise<{ redirect: string } | ShelfSuggestions | DiveResponse> {
   const cleaned = cleanQuestion(question);
   const check = assessQuestion(cleaned);
   if (!check.ok) throw new DiveError(check.code, check.message);
@@ -159,7 +164,21 @@ export async function answerQuestion(
   if (seed) return { redirect: `/topic/${seed.id}` };
 
   const mode = resolveProvider();
-  if (mode.kind === "none") throw new DiveError("no_provider", COPY.no_provider_ask);
+  if (mode.kind === "none") {
+    const { seeds, close } = suggestSeeds(cleaned);
+    return {
+      message: close
+        ? "Nothing on the shelf is that exact question. These written trails are the closest, and each one goes to bedrock."
+        : "That one is not on the shelf. These trails are written all the way down, with no model required.",
+      suggestions: seeds.map((item) => ({
+        id: item.id,
+        topic: item.topic,
+        hook: item.hook,
+        emoji: item.emoji,
+        cat: item.cat,
+      })),
+    };
+  }
   enforceRateLimit(ip);
 
   const key = cacheKey({ mode: "ask", question: cleaned, depth: 0, topics: [] });
