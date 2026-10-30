@@ -1,5 +1,3 @@
-// Shareable persistent chain — wired up in Session 3.
-// Placeholder renders a friendly "coming soon" so the route exists.
 import Link from "next/link";
 import { T } from "@/lib/tokens";
 
@@ -14,51 +12,56 @@ export default function ChainPage({ params }: Props) {
         minHeight: "100svh",
         background: T.paper,
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "40px 28px",
-        textAlign: "center",
-        gap: "20px",
+        padding: "40px 24px",
       }}
     >
-      <span style={{ fontSize: "40px" }}>🕳️</span>
-      <h1
-        style={{
-          fontFamily: "var(--font-baskerville), Georgia, serif",
-          fontSize: "clamp(22px, 5vw, 32px)",
-          fontWeight: 700,
-          color: T.ink,
-          letterSpacing: "-0.02em",
-        }}
-      >
-        Shareable chains coming in Session 3
-      </h1>
-      <p
-        style={{
-          fontFamily: "var(--font-dm-sans), sans-serif",
-          fontSize: "14px",
-          color: T.inkFaint,
-          maxWidth: "360px",
-          lineHeight: 1.7,
-        }}
-      >
-        Chain <code>{params.slug}</code> will live here once Supabase
-        persistence is wired up.
-      </p>
-      <Link
-        href="/"
-        style={{
-          fontFamily: "var(--font-dm-sans), sans-serif",
-          fontSize: "13px",
-          fontWeight: 600,
-          color: T.accent,
-          textDecoration: "none",
-          letterSpacing: "0.04em",
-        }}
-      >
-        ← Back to all topics
-      </Link>
+      <div style={{ maxWidth: 460, textAlign: "center" }}>
+        <h1
+          style={{
+            fontFamily: "var(--font-baskerville), Georgia, serif",
+            fontSize: "clamp(26px, 5vw, 36px)",
+            margin: "0 0 12px",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          This trail was not saved.
+        </h1>
+        <p
+          style={{
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            fontSize: 15,
+            lineHeight: 1.65,
+            color: T.inkFaint,
+            marginBottom: 8,
+          }}
+        >
+          Shareable links need a database, and this app does not write trails anywhere yet.
+          The map on a question still shows the hole you are in, on this device, until you leave.
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            fontSize: 13,
+            color: T.inkFaint,
+            marginBottom: 20,
+          }}
+        >
+          Unknown trail: {params.slug}
+        </p>
+        <Link
+          href="/"
+          style={{
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            fontWeight: 600,
+            color: T.accent,
+            textDecoration: "none",
+          }}
+        >
+          ← All topics
+        </Link>
+      </div>
     </div>
   );
 }

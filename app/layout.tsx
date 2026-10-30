@@ -17,14 +17,21 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://butwhy-droo4you.vercel.app";
+
 export const metadata: Metadata = {
-  title: "ButWhy — Curiosity without a bottom.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "ButWhy — Curiosity without a bottom",
+    template: "%s — ButWhy",
+  },
   description:
-    "Tap 'But Why?' to go infinitely deeper on any topic. A recursive curiosity engine.",
+    "Ask why, then ask why again. Written trails for thirty-two questions, and a live model when you want to keep going.",
   openGraph: {
     title: "ButWhy",
     description: "Curiosity without a bottom.",
     siteName: "ButWhy",
+    url: siteUrl,
   },
 };
 
@@ -44,7 +51,12 @@ export default function RootLayout({
       lang="en"
       className={`${libreBaskerville.variable} ${dmSans.variable}`}
     >
-      <body className="bg-paper text-ink antialiased">{children}</body>
+      <body className="bg-paper text-ink antialiased">
+        <a className="skip" href="#content">
+          Skip to content
+        </a>
+        <div id="content">{children}</div>
+      </body>
     </html>
   );
 }

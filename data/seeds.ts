@@ -204,4 +204,160 @@ export const SEEDS: SeedTopic[] = [
     answer: "Social feeds use variable reward schedules — the same psychological mechanism as slot machines. You never know if the next post will be amazing or boring, and that unpredictability is far more addictive than guaranteed rewards.",
     hook: "But the engineers who built these systems largely won't let their own children use them — the designers of the machine know exactly what it does.",
   },
+
+  // ── Game Dev ──────────────────────────────────────────────────────────────
+  {
+    id: "g1", cat: "gamedev", emoji: "🎮",
+    topic: "Why do games run at 60 frames a second?",
+    answer: "A game is a stack of still pictures, and sixty a second is enough that motion looks smooth and a button press shows up quickly. Each picture gets about a sixtieth of a second, roughly 17 milliseconds, to be drawn.",
+    hook: "But movies look fine at 24 pictures a second, which is much fewer.",
+  },
+  {
+    id: "g2", cat: "gamedev", emoji: "🦘",
+    topic: "Why does jumping in a game feel good?",
+    answer: "A good game jump arcs the way your body expects, hop when you tap and reach when you hold. The game is quietly forgiving about the exact frame you press the button.",
+    hook: "But a jump button needs a little forgiveness that the real ground never grants.",
+  },
+  {
+    id: "g3", cat: "gamedev", emoji: "🔺",
+    topic: "Why are game characters made of polygons?",
+    answer: "The round heroes on screen are shells made of flat shapes a graphics chip can paint very fast. Curves would be expensive, and flat pieces can fake a curve if there are enough of them.",
+    hook: "But the round characters are built from flat triangles.",
+  },
+  {
+    id: "g4", cat: "gamedev", emoji: "💾",
+    topic: "Why do games keep save files?",
+    answer: "The live game is a pile of numbers held in memory that forgets when the power stops. A save file writes the important numbers somewhere that remembers in the dark.",
+    hook: "But turning the machine off erases a game that was never saved.",
+  },
+  {
+    id: "g5", cat: "gamedev", emoji: "⏳",
+    topic: "Why do games show loading screens?",
+    answer: "Models, sounds, and maps have to sit in fast memory before a picture can be drawn. The loading screen is the pause while that copy happens.",
+    hook: "But the world has to be copied into fast memory before the first picture.",
+  },
+
+  // ── How websites work ─────────────────────────────────────────────────────
+  {
+    id: "w1", cat: "web", emoji: "🔗",
+    topic: "Why does typing an address open a page?",
+    answer: "You type a name, and your browser asks the internet where that name lives, then asks the computer there for the page. The page you see is the reply.",
+    hook: "But the name you typed is not a place yet — the internet still has to look it up in a phone book.",
+  },
+  {
+    id: "w2", cat: "web", emoji: "🐢",
+    topic: "Why do some pages load slowly?",
+    answer: "A page is a handful of requests, and every request can wait on a file, a far-away computer, or a busy network. The screen cannot draw bytes that have not arrived.",
+    hook: "But a page made of many separate files has more chances to wait.",
+  },
+  {
+    id: "w3", cat: "web", emoji: "🖥️",
+    topic: "Why does a website need a server?",
+    answer: "The page is not hiding inside your laptop until you ask. Some other computer has to stay on and send it when a browser knocks.",
+    hook: "But a server is only a computer that stays on and answers.",
+  },
+  {
+    id: "w4", cat: "web", emoji: "📬",
+    topic: "Why does the internet need addresses?",
+    answer: "Messages on the internet are tiny envelopes passed from machine to machine. Without a destination number, nobody knows which way to pass them.",
+    hook: "But every packet still needs a number or it cannot find a machine.",
+  },
+  {
+    id: "w5", cat: "web", emoji: "🔒",
+    topic: "Why do web pages show a padlock?",
+    answer: "The padlock means the browser checked the site's identity card and scrambled the conversation. Outsiders on the path can see that you connected, and they cannot read the page.",
+    hook: "But the padlock means the page came through a private pipe.",
+  },
+
+  // ── Music ─────────────────────────────────────────────────────────────────
+  {
+    id: "m1", cat: "music", emoji: "🎵",
+    topic: "Why do songs get stuck in your head?",
+    answer: "A catchy phrase can keep replaying in the hearing parts of the brain with no speaker on. Attention grabs the phrase and presses play again.",
+    hook: "But the stuck part is usually a short loop, not the whole song.",
+  },
+  {
+    id: "m2", cat: "music", emoji: "🎸",
+    topic: "Why do instruments sound different?",
+    answer: "Two instruments can share a pitch and still feel nothing alike. The difference is the extra vibrations riding on the main note, a recipe called timbre.",
+    hook: "But a guitar and a flute can play the same note and still sound different.",
+  },
+  {
+    id: "m3", cat: "music", emoji: "💃",
+    topic: "Why does music make people dance?",
+    answer: "A beat is a clock everyone in the room can hear. Bodies like agreeing with a clock, which is why feet start without a plan.",
+    hook: "But a steady beat makes feet twitch even when you meant to sit still.",
+  },
+  {
+    id: "m4", cat: "music", emoji: "🎹",
+    topic: "Why do some chords sound sad?",
+    answer: "In the music many of us grew up with, a minor chord stacks its notes a little differently from a major one. Listeners learned to hear that stack as serious or sad.",
+    hook: "But a minor chord sounds more serious than a major one to many listeners.",
+  },
+
+  // ── Bodies ────────────────────────────────────────────────────────────────
+  {
+    id: "y1", cat: "body", emoji: "👁️",
+    topic: "Why do we blink?",
+    answer: "Blinking spreads tears across the eye and wipes dust, like a windshield wiper. It happens many times a minute, and you almost never decide to do it.",
+    hook: "But the eye needs that wipe many times a minute, and you rarely notice.",
+  },
+  {
+    id: "y2", cat: "body", emoji: "🩹",
+    topic: "Why do bruises change color?",
+    answer: "A bruise is blood that leaked under the skin when tiny vessels broke. Over days the body takes that blood apart, and each stage of the cleanup is a different color.",
+    hook: "But the mark starts red because the blood is still under the skin.",
+  },
+  {
+    id: "y3", cat: "body", emoji: "👆",
+    topic: "Why do we have fingerprints?",
+    answer: "The ridges on your fingers help grip, especially on wet surfaces, a bit like the treads on a tire. They may also make fine textures easier to feel.",
+    hook: "But the ridges help especially when the surface is wet.",
+  },
+  {
+    id: "y4", cat: "body", emoji: "🦴",
+    topic: "Why do bones heal?",
+    answer: "Bone is alive, with a blood supply and cells whose job is repair. A break is a construction project, not a dry stick hoping to stick.",
+    hook: "But healing starts with a blood clot in the gap, not with solid bone.",
+  },
+
+  // Unlisted trails reached by typing the question. Same written depth, not on the grid.
+  {
+    id: "b1", cat: "science", emoji: "🌤️", listed: false,
+    topic: "Why is the sky blue?",
+    answer: "Sunlight looks white, but it is a mix of colors. Air molecules scatter the blue part in every direction, so whichever way you look, some blue reaches your eye.",
+    hook: "But the sky is not always blue — at sunset it turns red and orange.",
+  },
+  {
+    id: "b2", cat: "science", emoji: "🧊", listed: false,
+    topic: "Why is ice slippery?",
+    answer: "A thin, water-like film sits on ice when you step on it. Your shoe slides on that film instead of gripping solid crystal.",
+    hook: "But ice stays slippery far below freezing, when a simple melt layer should not exist.",
+  },
+  {
+    id: "b3", cat: "everyday", emoji: "😮", listed: false,
+    topic: "Why do we hiccup?",
+    answer: "A hiccup is a sudden jerk of the diaphragm, the muscle under your lungs, followed by a snap of the vocal cords. That snap is the hic you hear.",
+    hook: "But nobody is sure what hiccups are for — they may be a leftover from our fish ancestors.",
+  },
+  {
+    id: "b4", cat: "science", emoji: "✨", listed: false,
+    topic: "Why do stars twinkle?",
+    answer: "Stars are so far away they act like pinpoints. Their light wobbles as it passes through moving pockets of warm and cool air, so the brightness shimmers.",
+    hook: "But planets usually do not twinkle — they shine steadier than stars.",
+  },
+  {
+    id: "b5", cat: "everyday", emoji: "🥶", listed: false,
+    topic: "Why do we get goosebumps?",
+    answer: "Tiny muscles at the root of each hair pull tight when you are cold or startled. The hair stands up, and the skin around it bunches into a bump.",
+    hook: "But human hair is too sparse for goosebumps to keep us warm.",
+  },
+  {
+    id: "b6", cat: "science", emoji: "🧭", listed: false,
+    topic: "Why do compasses point north?",
+    answer: "A compass needle is a tiny magnet. It lines up with Earth's magnetic field, so the marked end swings toward magnetic north.",
+    hook: "But magnetic north is not the same spot as the North Pole, and it moves.",
+  },
 ];
+
+export const LISTED_SEEDS = SEEDS.filter((seed) => seed.listed !== false);

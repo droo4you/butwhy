@@ -15,7 +15,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const seed = SEEDS.find((s) => s.id === params.id);
   if (!seed) return { title: "ButWhy" };
   return {
-    title: `${seed.topic} — ButWhy`,
+    title: seed.topic,
     description: seed.answer,
     openGraph: {
       title: seed.topic,
@@ -28,5 +28,10 @@ export default function TopicPage({ params }: Props) {
   const seed = SEEDS.find((s) => s.id === params.id);
   if (!seed) notFound();
 
-  return <DiveScreen seed={seed} />;
+  return (
+    <DiveScreen
+      root={{ ...seed, depth: 0, parentId: null }}
+      presetId={seed.id}
+    />
+  );
 }

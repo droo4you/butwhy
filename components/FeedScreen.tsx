@@ -2,51 +2,62 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SEEDS } from "@/data/seeds";
-import { Category, SeedTopic } from "@/types";
-import { T, CAT_COLORS } from "@/lib/tokens";
+import { LISTED_SEEDS } from "@/data/seeds";
+import { T, CAT_COLORS, CAT_LABELS } from "@/lib/tokens";
+import type { Category } from "@/types";
+import AskForm from "./AskForm";
 
 const CATS: { id: Category | "all"; label: string }[] = [
-  { id: "all",        label: "All" },
-  { id: "science",    label: "Science" },
-  { id: "history",    label: "History" },
-  { id: "nature",     label: "Nature" },
+  { id: "all", label: "All" },
+  { id: "science", label: "Science" },
+  { id: "history", label: "History" },
+  { id: "nature", label: "Nature" },
   { id: "philosophy", label: "Philosophy" },
-  { id: "food",       label: "Food" },
-  { id: "everyday",   label: "Everyday" },
+  { id: "food", label: "Food" },
+  { id: "everyday", label: "Everyday" },
+  { id: "gamedev", label: "Game Dev" },
+  { id: "web", label: "Web" },
+  { id: "music", label: "Music" },
+  { id: "body", label: "Bodies" },
 ];
 
 export default function FeedScreen() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<Category | "all">("all");
-
   const filtered =
     activeFilter === "all"
-      ? SEEDS
-      : SEEDS.filter((s) => s.cat === activeFilter);
-
-  function handleSelect(topic: SeedTopic) {
-    router.push(`/topic/${topic.id}`);
-  }
+      ? LISTED_SEEDS
+      : LISTED_SEEDS.filter((seed) => seed.cat === activeFilter);
 
   return (
     <div style={{ background: T.paper, minHeight: "100svh" }}>
-      {/* Masthead */}
-      <div
+      <header
         style={{
-          padding: "clamp(40px,8vw,72px) 28px 32px",
+          padding: "clamp(36px, 8vw, 72px) clamp(20px, 4vw, 28px) 28px",
           borderBottom: `1px solid ${T.rule}`,
         }}
       >
+        <p
+          style={{
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            fontSize: 12,
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            color: T.accent,
+            margin: "0 0 12px",
+          }}
+        >
+          Curiosity, one but deeper
+        </p>
         <h1
           style={{
             fontFamily: "var(--font-baskerville), Georgia, serif",
-            fontSize: "clamp(36px, 8vw, 64px)",
+            fontSize: "clamp(40px, 8vw, 68px)",
             fontWeight: 700,
             color: T.ink,
             letterSpacing: "-0.03em",
-            lineHeight: 1,
-            marginBottom: "14px",
+            lineHeight: 0.95,
+            margin: "0 0 14px",
           }}
         >
           ButWhy
@@ -54,156 +65,161 @@ export default function FeedScreen() {
         <p
           style={{
             fontFamily: "var(--font-dm-sans), sans-serif",
-            fontSize: "clamp(13px, 2vw, 15px)",
+            fontSize: "clamp(15px, 2vw, 17px)",
             color: T.inkFaint,
-            letterSpacing: "0.04em",
+            margin: 0,
+            maxWidth: 460,
+            lineHeight: 1.5,
           }}
         >
-          Pick a question. Go infinitely deeper.
+          Pick a question. Go deeper. Every answer ends with a But.
         </p>
-      </div>
+      </header>
 
-      {/* Category filter — sticky */}
+      <section
+        aria-labelledby="ask-heading"
+        style={{
+          background: T.cream,
+          borderBottom: `1px solid ${T.rule}`,
+          padding: "28px clamp(20px, 4vw, 28px) 26px",
+        }}
+      >
+        <div style={{ maxWidth: 760, margin: "0 auto" }}>
+          <h2
+            id="ask-heading"
+            style={{
+              fontFamily: "var(--font-baskerville), Georgia, serif",
+              fontSize: "clamp(22px, 4vw, 28px)",
+              margin: "0 0 6px",
+              color: T.ink,
+            }}
+          >
+            Ask your own question
+          </h2>
+          <p
+            style={{
+              fontFamily: "var(--font-dm-sans), sans-serif",
+              fontSize: 14,
+              color: T.inkFaint,
+              margin: "0 0 16px",
+            }}
+          >
+            A close question opens a written trail. If nothing matches, the shelf suggests one.
+          </p>
+          <AskForm />
+        </div>
+      </section>
+
       <div
+        role="group"
+        aria-label="Topic categories"
         style={{
           position: "sticky",
           top: 0,
           zIndex: 10,
           background: T.cream,
           borderBottom: `1px solid ${T.rule}`,
-          padding: "0 20px",
+          padding: "0 12px",
           display: "flex",
-          gap: "0",
           overflowX: "auto",
           scrollbarWidth: "none",
         }}
       >
-        {CATS.map((c) => {
-          const isActive = activeFilter === c.id;
+        {CATS.map((category) => {
+          const selected = activeFilter === category.id;
           return (
             <button
-              key={c.id}
-              onClick={() => setActiveFilter(c.id)}
+              key={category.id}
+              type="button"
+              aria-pressed={selected}
+              onClick={() => setActiveFilter(category.id)}
               style={{
                 background: "none",
                 border: "none",
-                borderBottom: `2px solid ${isActive ? T.ink : "transparent"}`,
-                padding: "14px 14px 12px",
+                borderBottom: `2px solid ${selected ? T.ink : "transparent"}`,
+                padding: "14px 12px 12px",
+                minHeight: 48,
                 fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: "12px",
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? T.ink : T.inkFaint,
+                fontSize: 13,
+                fontWeight: selected ? 600 : 400,
+                color: selected ? T.ink : T.inkFaint,
                 cursor: "pointer",
                 whiteSpace: "nowrap",
-                transition: "color 0.15s, border-color 0.15s",
-                letterSpacing: "0.04em",
               }}
             >
-              {c.label}
+              {category.label}
             </button>
           );
         })}
       </div>
 
-      {/* Topic grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-          gap: "1px",
-          background: T.rule,
-          border: `1px solid ${T.rule}`,
-          margin: "0",
-        }}
-      >
+      <main className="topic-grid" aria-label="Questions">
         {filtered.map((topic) => {
           const catColor = CAT_COLORS[topic.cat] || T.inkFaint;
           return (
             <button
               key={topic.id}
-              onClick={() => handleSelect(topic)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.background = T.cream)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.background = T.paper)
-              }
+              type="button"
+              className="topic-card"
+              onClick={() => router.push(`/topic/${topic.id}`)}
               style={{
-                background: T.paper,
                 border: "none",
+                borderTop: `3px solid ${catColor}`,
                 textAlign: "left",
                 cursor: "pointer",
-                padding: "28px 24px",
+                padding: "24px 22px 26px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "10px",
-                transition: "background 0.15s",
+                gap: 10,
+                minHeight: 44,
               }}
             >
-              {/* Cat badge */}
-              <div
+              <span
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
+                  fontFamily: "var(--font-dm-sans), sans-serif",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: catColor,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
                 }}
               >
-                <span style={{ fontSize: "20px" }}>{topic.emoji}</span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-dm-sans), sans-serif",
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    color: catColor,
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {topic.cat}
-                </span>
-              </div>
-
-              {/* Question */}
-              <h3
+                <span aria-hidden="true">{topic.emoji} </span>
+                {CAT_LABELS[topic.cat]}
+              </span>
+              <span
                 style={{
                   fontFamily: "var(--font-baskerville), Georgia, serif",
-                  fontSize: "clamp(16px, 2.5vw, 20px)",
+                  fontSize: "clamp(18px, 2.4vw, 22px)",
                   fontWeight: 700,
                   color: T.ink,
                   lineHeight: 1.25,
                   letterSpacing: "-0.01em",
-                  margin: 0,
                 }}
               >
                 {topic.topic}
-              </h3>
-
-              {/* Hook preview */}
-              <p
-                style={{
-                  fontFamily: "var(--font-dm-sans), sans-serif",
-                  fontSize: "12px",
-                  color: T.inkFaint,
-                  lineHeight: 1.55,
-                  margin: 0,
-                  overflow: "hidden",
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                }}
-              >
-                {topic.hook}
-              </p>
-
-              {/* CTA */}
+              </span>
               <span
                 style={{
                   fontFamily: "var(--font-dm-sans), sans-serif",
-                  fontSize: "11px",
+                  fontSize: 13,
+                  color: T.inkFaint,
+                  lineHeight: 1.5,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {topic.hook}
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-dm-sans), sans-serif",
+                  fontSize: 13,
                   fontWeight: 600,
                   color: T.accent,
-                  letterSpacing: "0.06em",
-                  marginTop: "4px",
+                  marginTop: 4,
                 }}
               >
                 But Why? →
@@ -211,12 +227,11 @@ export default function FeedScreen() {
             </button>
           );
         })}
-      </div>
+      </main>
 
-      {/* Footer */}
-      <div
+      <footer
         style={{
-          padding: "32px 28px",
+          padding: "28px 20px 36px",
           textAlign: "center",
           borderTop: `1px solid ${T.rule}`,
         }}
@@ -224,14 +239,25 @@ export default function FeedScreen() {
         <p
           style={{
             fontFamily: "var(--font-dm-sans), sans-serif",
-            fontSize: "11px",
-            color: T.inkMuted,
-            letterSpacing: "0.06em",
+            fontSize: 13,
+            color: T.inkFaint,
+            margin: "0 0 8px",
           }}
         >
-          {SEEDS.length} rabbit holes. Each one bottomless.
+          {LISTED_SEEDS.length} rabbit holes. Each one is written about eight whys down, to bedrock. No key required.
         </p>
-      </div>
+        <p
+          style={{
+            fontFamily: "var(--font-baskerville), Georgia, serif",
+            fontStyle: "italic",
+            fontSize: 15,
+            color: T.inkLight,
+            margin: 0,
+          }}
+        >
+          Started on a lunch break, after a second grader would not stop asking why.
+        </p>
+      </footer>
     </div>
   );
 }
